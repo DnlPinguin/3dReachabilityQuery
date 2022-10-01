@@ -1,5 +1,6 @@
 
 #include "graph/graph.h"
+#include "helper/clock.h"
 
 #include <algorithm>
 #include <thread>
@@ -40,30 +41,19 @@ typedef bgi::rtree<pointStructureForrTree, bgi::linear<16>> rTreePoints;
 typedef bgi::rtree<SccWithMbr, bgi::linear<16>> rTreeSccPlanes;
 typedef bgi::rtree<SpatialNode, bgi::linear<16>> rTreePlanes;
 
-class Timer
-{
-private:
-    Clock::time_point start_time, stop_time;
-
-public:
-    Timer();
-
-    void start();
- 
-    double getElapsedTimeInSeconds();
-
-    double stop();
-
-};
 
 struct queryParameter
 {
 	int queryNode;
 	box spatialRegion;
+	int degree;
+	int cardinality;
 
-	queryParameter(int _queryNode, box _spatialRegion) {
+	queryParameter(int _queryNode, box _spatialRegion, int _degree, int _cardinality) {
 		queryNode = _queryNode;
 		spatialRegion = _spatialRegion;
+		degree = _degree;
+		cardinality = _cardinality;
 	}
 };
 
@@ -76,6 +66,9 @@ rTreePoints build3dRtreeWithPoints(Graph* HybridGraph, LocationMap* LocationGrap
 
 rTreeCubes build3dRtreeWithPlanes(Graph* HybridGraph, LocationMap* LocationGraph);
 
+rTreePlanes build2dRtreeWithPoints(LocationMap* spatialGraph);
+
+rTreeSccPlanes build2dRtreeWithPlanes(LocationMap* spatialGraph);
 
 bool ThreeDReachReverse(queryParameter queryParam, rTreeLines* rTree, int nodeDimension);
 
@@ -84,3 +77,77 @@ bool ThreeDReachReverseCubes(queryParameter queryParam, rTreeCubes* rTree, Locat
 bool ThreeDReach(queryParameter queryParam, rTreePoints* rTree, vector<IntervalScheme>* interval);
 
 bool ThreeDReachPlanes(queryParameter queryParam, rTreeCubes* rTree, vector<IntervalScheme>* interval, LocationMap* spatialGraph);
+
+bool socreach(queryParameter queryParam, Graph* SocialGraph, LocationMap* spatialGraph);
+
+bool socreachMbr(queryParameter queryParam, Graph* SocialGraph, LocationMap* spatialGraph);
+
+
+bool spareach(queryParameter queryParam, Graph* SocialGraph, rTreePlanes* rTree);
+
+bool spareachMbr(queryParameter queryParam, Graph* socialGraph,rTreeSccPlanes* rTree, LocationMap* spatialGraph);
+
+
+void readPostorder(string filename, Graph* SocialGraph);
+
+void readSuperConnectedComponents(string filename, Graph* SocialGraph);
+
+void readSpatialData(string filename, LocationMap* SpatialGraph);
+
+void readIntervalScheme(string filename, Graph *SocialGraph);
+
+void readReducedGraph(string filename, Graph *SocialGraph);
+
+vector<queryParameter> readQueries(string filename);
+
+
+class RangeReachVertex {
+public: 
+	// Boolean map to Check wether a node is able to reach a node with spatial information
+	unordered_map<int, bool> B_Vertex;
+	// MBR of all nodes reachable by this node
+	unordered_map<int, MBR> R_Vertex;
+	// Vector of spatial Grids reachable by this node
+	unordered_map<int, unordered_set<int>> G_Vertex;
+
+	map<int, MBR> spatialGrid;
+
+	// Maximum Grids spanned by all spatial nodes
+	MBR maximumMBR;
+
+	void writeAttributesToFile(string superFile);
+
+	void readAttributesFromFile(string superFile);
+	
+	void createGridField(int layers);
+
+	//Builds the RangeReachVertex according to the social and spatial Data;
+	RangeReachVertex();
+
+	bool SpaReachQuery(int node, box queryWindow, Graph* socialGraph, LocationMap* spatialGraph, int layers);
+	void createGVertex(Graph* socialGraph, LocationMap* locationGraph, float MAX_REACH_GRIDS, int layers);
+	void checkVertexCorrectnes();
+	
+	MBR getGridFieldById(int id);
+
+	//Gets the spatial Grid field of the location
+	int getSpatialGridField(Location nodeLocation);
+	//Performs the rangeReach query for a node and a given spatial region
+	bool rangeReach(int node, box spatialRegion);
+
+    #pragma region PRINT STATEMENTS
+
+	void printAttributes();
+
+	void printGridField();
+
+	void printAllGridLayers();
+	
+	void printBVertex();
+	
+	void printRVertex();
+	
+	void printGVertex();
+};
+
+

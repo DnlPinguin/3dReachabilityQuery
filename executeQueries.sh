@@ -1,4 +1,16 @@
-Executables/runQueries data/dummy data/dummy_queries 3DReach
-Executables/runQueries data/dummy data/dummy_queries 3DReachMbr
-Executables/runQueries data/dummy data/dummy_queries 3DReachReverse
-Executables/runQueries data/dummy data/dummy_queries 3DReachReverseMbr
+
+#asdasd
+
+Executables/run3dReach $1 $2 3DReach $3
+Executables/run3dReach $1 $2 3DReachMbr $3
+Executables/run3dReach $1 $2 3DReachReverse $3
+Executables/run3dReach $1 $2 3DReachReverseMbr $3
+
+Executables/runSocReach $1 $2 socreach $3
+Executables/runSocReach $1 $2 socreachMbr $3
+
+Executables/runSpaReach $1 $2 spareach $3
+Executables/runSpaReach $1 $2 spareachMbr $3
+
+Executables/runGeoReach $1 $2 $3
+

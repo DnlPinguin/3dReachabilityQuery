@@ -25,9 +25,11 @@ class Graph {
         // Set of all Vertices
         unordered_map<int, int> postOrderWithIndex;
         unordered_map<int, int> nodeHasPostorder;
+        vector<int> postOrder;
 
         //Representation of Graphs as adjancency list.
         unordered_map <int, vector<int>> GraphScheme;
+        unordered_map <int, vector<int>> GraphSchemeReverse;
 
         //All Information for the super connected components.
         unordered_map<int, vector<int>> SuperConnectedComponents;
@@ -75,6 +77,31 @@ public:
     vector<coordinates> MinMaxCorners;
     LocationMap();
 };
+
+struct MBR {
+public:
+	coordinates xMin;
+	coordinates xMax;
+	coordinates yMin;
+	coordinates yMax;
+	MBR();
+	// Creates a Minimum Bounding Reactangle according to the parameter;
+	MBR(Location loc);
+
+	MBR(coordinates _xMin, coordinates _yMin, coordinates _xMax, coordinates _yMax);
+
+	//Expands the Miniumum Bound Reactangle according to the parameter;
+	void insertLoc(Location loc);
+	void insertMBR(MBR mbr);
+	bool containsPoint(Location loc);
+	
+	void print();
+	string getString();
+	string stringify();
+	//Checks if the MBR overlaps with the seconds MBR
+	bool overlaps(MBR other);
+};
+
 
 
 #endif

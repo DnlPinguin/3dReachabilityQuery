@@ -1,25 +1,4 @@
-#include "main.h"
-
-Timer::Timer()
-{
-    start();
-}
-
-void Timer::start()
-{
-    start_time = Clock::now();
-}
-
-double Timer::getElapsedTimeInSeconds()
-{
-    return std::chrono::duration<double>(stop_time - start_time).count();
-}
-
-double Timer::stop()
-{
-    stop_time = Clock::now();
-    return getElapsedTimeInSeconds();
-}
+#include "../main.h"
 
 /**
  * @brief Postorder file has the following structure
@@ -36,7 +15,7 @@ double Timer::stop()
 void readPostorder(string filename, Graph* SocialGraph){
     cout << "Read postorder ";
     ifstream file;
-    file.open(filename);
+    file.open("data/postorder/" + filename);
     string line;
     int counter = 1;
 
@@ -45,6 +24,7 @@ void readPostorder(string filename, Graph* SocialGraph){
         while (file >> node) {
             SocialGraph->nodeHasPostorder[counter] = node;
             SocialGraph->postOrderWithIndex[node] = counter;
+            SocialGraph->postOrder.push_back(node);
             counter++;
         }
     }
@@ -64,7 +44,7 @@ void readPostorder(string filename, Graph* SocialGraph){
 void readSuperConnectedComponents(string filename, Graph* SocialGraph){
     cout << "Read strongly connected components" << endl;
     ifstream file;
-    file.open(filename);
+    file.open("data/strongly_connected_components/" + filename);
     string line;
     int sccNode, node;
     bool sccDoesntExist = true;
@@ -110,7 +90,7 @@ void readSpatialData(string filename, LocationMap* SpatialGraph){
     vector<coordinates> _minMaxCorners {float(INT_MAX), float(INT_MAX), float(INT_MIN), float(INT_MIN)};
 
     ifstream file;
-    file.open(filename);
+    file.open("data/reduced_spatial_data/" + filename);
     string line;
     vector<coordinates> SpatialData;
     int node;
@@ -148,7 +128,6 @@ void readSpatialData(string filename, LocationMap* SpatialGraph){
     }
     SpatialGraph->MinMaxCorners = _minMaxCorners;
     cout << counter << " points loaded." << endl;
-
 }
 
 /**
@@ -162,7 +141,7 @@ void readSpatialData(string filename, LocationMap* SpatialGraph){
 void readIntervalScheme(string filename, Graph *SocialGraph){
     cout << "Load interval scheme from file... " << endl;
     ifstream file;
-    file.open(filename);
+    file.open("data/interval_scheme/" + filename);
     string line;
     vector<int> IntervalData;
     int node;
@@ -171,7 +150,6 @@ void readIntervalScheme(string filename, Graph *SocialGraph){
     {
         while (getline(file, line))
         {
-            cout << line << endl;
             stringstream   linestream(line);
             string  data;
             while (getline(linestream, data, '\t')) {
@@ -201,117 +179,65 @@ void readIntervalScheme(string filename, Graph *SocialGraph){
 vector<queryParameter> readQueries(string filename){
     vector<queryParameter> queries;
     ifstream queryFile;
-    int node;
+    int node, cardinality, degree;
     coordinates xMin, yMin, xMax, yMax;
-
-    queryFile.open(filename);
+    int counter = 0;
+    float area;
+    queryFile.open("data/queries/" + filename);
     if (queryFile.is_open()) {
-        cout << "file is open \n";
         string str;
         getline(queryFile, str);
-        while (queryFile >> node >> xMin >> yMin >> xMax >> yMax ) {
+        while (queryFile >> node >> degree >> xMin >> yMin >> xMax >> yMax >>  area >> cardinality) {
             box area_window;
-            queries.push_back(queryParameter(node, box(point(xMin, yMin), point(xMax, yMax))));
+            counter++;
+            cout << node << " " << degree << " " << xMin << " " << yMin << " " << xMax << " " << yMax << " " << area << " " << cardinality << "\t"; 
+            queries.push_back(queryParameter(node, box(point(xMin, yMin), point(xMax, yMax)), degree, cardinality));
         }
     }
+    cout << counter << endl;
     cout << queries.size() << " queries loaded.\n";
     return queries;
 }
 
-int main(int argc, char **argv){
 
-    Graph SocialGraph;
-    LocationMap SpatialGraph;
-    Timer clock;
+/**
+ * @brief Reduced graph file needs to have the following structure
+ * sourceNode \t reachableNodeOne \t reachableNodeTwo \t .... \n
+ * .... \n
+ * @param filename 
+ * @param SocialGraph 
+ */
+void readReducedGraph(string filename, Graph* SocialGraph){
+    SocialGraph->GraphScheme.clear();
+    cout << "Read reduced graph file: ";
+    ifstream file;
+    file.open("data/reduced_graph/" + filename);
 
-    string filename, queryfile, method;
-		
-	if (argc == 4){
-        filename = argv[1];
-		queryfile = argv[2];
-        method = argv[3];
-	} else {
-        cout << "Input parameters are missing" << endl;
-	}
-
-	readSuperConnectedComponents(filename + "_strongly_connected_components", &SocialGraph);
-	readPostorder(filename + "_postorder", &SocialGraph);
-	readSpatialData(filename + "_reduced_spatial_data", &SpatialGraph);
-
-    // readIntervalScheme(filename + "_interval_scheme_reverse", &SocialGraph);
-    if (method == "3DReach" || method == "3DReachMbr"){
-        readIntervalScheme(filename + "_interval_scheme_reverse", &SocialGraph);
-    }
-    readIntervalScheme(filename + "_interval_scheme", &SocialGraph);
-
-    vector<queryParameter> queries = readQueries(queryfile);
-
-    int amountOfExecutions = 1;
-
-
-	ofstream out(filename + "_" + method +  "_result.csv");
-
-
-
-    if (method == "3DReachReverse"){
-        rTreeLines rTree = build3dRtreeWithLines(&SocialGraph, &SpatialGraph);
-        for (int i = 0; i < queries.size(); i++){
-            double totalTime = 0;
-            bool hit = false;
-            for (int j = 0; j< amountOfExecutions; j++){
-                clock.start();
-                hit = ThreeDReachReverse(queries[i], &rTree, SocialGraph.postOrderWithIndex[queries[i].queryNode]);
-                totalTime = totalTime +  clock.stop(); 
+    bool isRootNode = true;
+    int counter = 0;
+    int rootNode, node;
+    string line;
+    if (file.is_open())
+    {
+        while (getline(file,  line))
+        {
+            stringstream   linestream(line);
+            string  nodeString;
+            while (getline(linestream, nodeString, '\t')) {
+                node = stoi(nodeString);
+                if (isRootNode) {
+                    rootNode = node;
+                    isRootNode = false;
+                }
+                counter++;
+                if(rootNode != node){
+                    SocialGraph->GraphScheme[rootNode].push_back(node);
+                    SocialGraph->GraphSchemeReverse[node].push_back(rootNode);
+                }
             }
-            double averageTime = totalTime / amountOfExecutions;
-            out << fixed << averageTime << "\t"  <<  hit << endl;
-        }
-    } 
-
-    if (method == "3DReachReverseMbr"){
-        rTreeCubes rTree = build3dRtreeWithCuboids(&SocialGraph, &SpatialGraph);
-        for (int i = 0; i < queries.size(); i++){
-            double totalTime = 0;
-            bool hit = false;
-            for (int j = 0; j< amountOfExecutions; j++){
-                clock.start();
-                hit = ThreeDReachReverseCubes(queries[i], &rTree, &SpatialGraph, SocialGraph.postOrderWithIndex[queries[i].queryNode]);
-                totalTime = totalTime +  clock.stop(); 
-            }
-            double averageTime = totalTime / amountOfExecutions;
-            out << fixed << averageTime << "\t" << hit << endl;
-
+            isRootNode = true;
         }
     }
-
-    if (method ==  "3DReach"){
-        rTreePoints rTree = build3dRtreeWithPoints(&SocialGraph, &SpatialGraph);
-        for (int i = 0; i < queries.size(); i++){
-            double totalTime = 0;
-            bool hit = false;
-            for (int j = 0; j< amountOfExecutions; j++){
-                clock.start();
-                hit = ThreeDReach(queries[i], &rTree, &(SocialGraph.IntervalSchemeGraphMap[queries[i].queryNode]));
-                totalTime = totalTime +  clock.stop(); 
-            }
-            double averageTime = totalTime / amountOfExecutions;
-            out << fixed << averageTime << "\t" << hit << endl;
-        }
-
-    }
-
-    if (method == "3DReachMbr"){
-        rTreeCubes rTree = build3dRtreeWithPlanes(&SocialGraph, &SpatialGraph);
-        for (int i = 0; i < queries.size(); i++){
-            double totalTime = 0;
-            bool hit = false;
-            for (int j = 0; j< amountOfExecutions; j++){
-                clock.start();
-                hit = ThreeDReachPlanes(queries[i], &rTree, &(SocialGraph.IntervalSchemeGraphMap[queries[i].queryNode]), &SpatialGraph);
-                totalTime = totalTime +  clock.stop(); 
-            }
-            double averageTime = totalTime / amountOfExecutions;
-            out << fixed << averageTime << "\t" << hit << endl;
-        }
-    }
+    cout << counter << " lines read.\n";
+    file.close();
 }

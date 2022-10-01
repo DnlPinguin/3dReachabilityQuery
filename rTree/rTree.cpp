@@ -198,3 +198,63 @@ rTreeCubes build3dRtreeWithPlanes(Graph* HybridGraph, LocationMap* LocationGraph
     return rtree;
 }
 
+/**
+ * @brief Create twodimensional R-Tree with normal points
+ * 
+ * @param LocationGraph 
+ * @return rTreePlanes 
+ */
+rTreePlanes build2dRtreeWithPoints(LocationMap* LocationGraph) {
+    cout << "Build 2d R-Tree: ";
+
+    rTreePlanes rTree;
+    auto start_time = std::chrono::high_resolution_clock::now();
+    for (unordered_map<int, spatialMbrRelation>::iterator iter = LocationGraph->Map.begin(); iter != LocationGraph->Map.end() ; iter++)
+    {
+        spatialMbrRelation Locations = iter->second;
+
+        if (!Locations.isMbr)
+        {
+            rTree.insert(make_pair(point(Locations.spatialData[0], Locations.spatialData[1]), iter->first));
+        }
+        else 
+        {
+            for (int i = 4; i < Locations.spatialData.size(); i = i + 2)
+            {
+                rTree.insert(make_pair(point(Locations.spatialData[i], Locations.spatialData[i+1]), iter->first));
+            }
+        }
+    }
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto time = end_time - start_time;
+    std::cout << time/std::chrono::milliseconds(1) << "ms" << endl;
+    cout << "R-Tree completed\n";
+    return rTree;
+}
+
+
+
+/**
+ * @brief Create two dimensional R-Tree with Mbrs 
+ * @param LocationGraph 
+ * @return rTreePlanes 
+ */
+
+rTreeSccPlanes build2dRtreeWithPlanes(LocationMap* spatialGraph) {
+    cout << "Build 2d R-Tree with Lines: ";
+
+    rTreeSccPlanes rTree;
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    for (unordered_map<int, spatialMbrRelation>::iterator iter = spatialGraph->Map.begin(); iter != spatialGraph->Map.end(); iter++)
+    {   
+        box Mbr(point(iter->second.spatialData[0],iter->second.spatialData[1]), point(iter->second.spatialData[2], iter->second.spatialData[3]));
+        rTree.insert(make_pair(Mbr, make_pair(iter->second.isMbr, iter->first)));
+    }
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto time = end_time - start_time;
+    std::cout << time/std::chrono::milliseconds(1) << "ms" << endl;
+    cout << "R-Tree completed\n";
+    return rTree;
+}
+
