@@ -22,11 +22,15 @@ using namespace std;
 
 class Graph {
     public:
-        // Set of all Vertices
+        // Node to postorder relation
+        vector<int> postOrder;
         unordered_map<int, int> postOrderWithIndex;
         unordered_map<int, int> nodeHasPostorder;
-        vector<int> postOrder;
 
+        // Node to Bfl Identifier        
+        unordered_map<int, int> nodeToBflIdentifier;
+        unordered_map<int, int> bflIdentifierToNode;
+        
         //Representation of Graphs as adjancency list.
         unordered_map <int, vector<int>> GraphScheme;
         unordered_map <int, vector<int>> GraphSchemeReverse;
@@ -40,9 +44,7 @@ class Graph {
 
         //Basic Graph Constructor
         Graph();
-        //Adds Edge between node parentNode and childNode
         void addEdge(int parentNode, int childNode);
-        //Checks if the given node is reachable depending on the IntervalScheme.
         bool reachNode(int nodeOne, int nodeTwo); 
 };
 

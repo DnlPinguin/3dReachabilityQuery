@@ -9,10 +9,13 @@ else
         LDFLAGS =
 endif
 
-SOURCES = rTree/rTree.cpp  query/3dQueries.cpp query/socReach.cpp graph/graph.cpp query/helper.cpp graph/filereader.cpp query/spareach.cpp graph/geoReach.cpp helper/clock.cpp
+SOURCES = rTree/rTree.cpp  query/3dQueries.cpp query/socReach.cpp graph/graph.cpp query/helper.cpp graph/filereader.cpp query/spareach.cpp graph/geoReach.cpp helper/clock.cpp bfl/bfl.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
-all: run3dReach runSocReach runSpaReach createIntervalScheme run3dReach runGeoReach createGeoReach createQueries
+all: run3dReach runSocReach runSpaReach runGeoReach runSpaReachBfl createIntervalScheme createGeoReach createQueries createBflFile
+
+createBflFile: $(OBJECTS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) createBflFile.cpp -o Executables/createBflFile $(LDADD)
 
 createQueries: $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) createQueries.cpp -o Executables/createQueries $(LDADD)
@@ -29,13 +32,14 @@ createIntervalScheme: $(OBJECTS)
 run3dReach: $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) run3dReach.cpp -o Executables/run3dReach $(LDADD)
 
-
 runSocReach: $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) runSocReach.cpp -o Executables/runSocReach $(LDADD)
 
-
 runSpaReach: $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) runSpaReach.cpp -o Executables/runSpaReach $(LDADD)
+
+runSpaReachBfl: $(OBJECTS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) runSpaReachBfl.cpp -o Executables/runSpaReachBfl $(LDADD)
 
 
 .cpp.o:

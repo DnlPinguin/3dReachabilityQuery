@@ -1,6 +1,7 @@
 
 #include "graph/graph.h"
 #include "helper/clock.h"
+// #include "bfl/bfl.h"
 
 #include <algorithm>
 #include <thread>
@@ -82,11 +83,13 @@ bool socreach(queryParameter queryParam, Graph* SocialGraph, LocationMap* spatia
 
 bool socreachMbr(queryParameter queryParam, Graph* SocialGraph, LocationMap* spatialGraph);
 
-
 bool spareach(queryParameter queryParam, Graph* SocialGraph, rTreePlanes* rTree);
 
 bool spareachMbr(queryParameter queryParam, Graph* socialGraph,rTreeSccPlanes* rTree, LocationMap* spatialGraph);
 
+bool spareachBfl(queryParameter queryParam, Graph* SocialGraph, rTreePlanes* rTree);
+
+bool spareachBflMbr(queryParameter queryParam, Graph* SocialGraph, rTreePlanes* rTree, LocationMap* spatialGraph);
 
 void readPostorder(string filename, Graph* SocialGraph);
 
@@ -97,6 +100,8 @@ void readSpatialData(string filename, LocationMap* SpatialGraph);
 void readIntervalScheme(string filename, Graph *SocialGraph);
 
 void readReducedGraph(string filename, Graph *SocialGraph);
+
+void readBflForNodeIdentifer(string filename, Graph* SocialGraph);
 
 vector<queryParameter> readQueries(string filename);
 

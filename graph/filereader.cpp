@@ -241,3 +241,19 @@ void readReducedGraph(string filename, Graph* SocialGraph){
     cout << counter << " lines read.\n";
     file.close();
 }
+
+void readBflForNodeIdentifer(string filename, Graph* SocialGraph){
+    cout << "Read bfl Identifier" << endl;
+    ifstream file;
+    file.open("data/bfl/" + filename);
+
+    int source, target;
+    if (file.is_open()){
+        while (file >> source >> target) {
+            SocialGraph->nodeToBflIdentifier[source] = target;
+            SocialGraph->bflIdentifierToNode[target] = source;
+        }
+    }
+    cout << "bfl file read\n";
+    file.close();
+}

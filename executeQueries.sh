@@ -12,5 +12,8 @@ Executables/runSocReach $1 $2 socreachMbr $3
 Executables/runSpaReach $1 $2 spareach $3
 Executables/runSpaReach $1 $2 spareachMbr $3
 
+Executables/runSpaReachBfl $1 $2 SpaReachBfl $3
+Executables/runSpaReachBfl $1 $2 SpaReachBflMbr $3
+
 Executables/runGeoReach $1 $2 $3
 
