@@ -9,7 +9,7 @@ else
         LDFLAGS =
 endif
 
-SOURCES = rTree/rTree.cpp  query/3dQueries.cpp query/socReach.cpp graph/graph.cpp query/helper.cpp graph/filereader.cpp query/spareach.cpp graph/geoReach.cpp helper/clock.cpp bfl/bfl.cpp
+SOURCES = rTree/rTree.cpp query/bflQueries.cpp query/spareach.cpp query/3dQueries.cpp query/socReach.cpp query/helper.cpp graph/graph.cpp graph/filereader.cpp graph/geoReach.cpp helper/clock.cpp bfl/bfl.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
 all: run3dReach runSocReach runSpaReach runGeoReach runSpaReachBfl createIntervalScheme createGeoReach createQueries createBflFile

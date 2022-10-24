@@ -24,41 +24,40 @@ int main(int argc, char **argv){
 	readSpatialData(filename + "_reduced_spatial_data", &SpatialGraph);
  
     readBflForNodeIdentifer(filename + "_bfl_id", &SocialGraph);
-    read_graph_for_bfl((filename + "_graph").c_str());
+
+    read_graph_for_bfl(("data/bfl/" + filename + "_graph").c_str());
     bfl_index_construction();
 
     vector<queryParameter> queries = readQueries(queryfile);
 
     int amountOfExecutions = 5;
 
-
 	ofstream out("data/results/" + outputFolder + "/" + filename + "_" + method +  "_result.csv");
 
 
-    if (method ==  "SpaReachBfl"){
+    if (method ==  "spaReachBfl"){
         rTreePlanes rTree = build2dRtreeWithPoints(&SpatialGraph);
         for (int i = 0; i < queries.size(); i++){
             double totalTime = 0;
             bool hit = false;
             for (int j = 0; j< amountOfExecutions; j++){
                 clock.start();
-                hit = spareach(queries[i], &SocialGraph, &rTree);
+                hit = spareachBfl(queries[i], &SocialGraph, &rTree);
                 totalTime = totalTime +  clock.stop(); 
             }
             double averageTime = totalTime / amountOfExecutions;
             out << fixed << averageTime << "\t" << hit << endl;
         }
-
     }
 
-    if (method == "SpaReachBflMbr"){
+    if (method == "spaReachBflMbr"){
         rTreeSccPlanes rTree = build2dRtreeWithPlanes(&SpatialGraph);
         for (int i = 0; i < queries.size(); i++){
             double totalTime = 0;
             bool hit = false;
             for (int j = 0; j< amountOfExecutions; j++){
                 clock.start();
-                hit = spareachMbr(queries[i], &SocialGraph, &rTree, &SpatialGraph);
+                hit = spareachBflMbr(queries[i], &SocialGraph, &rTree, &SpatialGraph);
                 totalTime = totalTime +  clock.stop(); 
             }
             double averageTime = totalTime / amountOfExecutions;

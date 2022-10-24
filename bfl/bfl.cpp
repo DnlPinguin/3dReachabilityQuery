@@ -218,12 +218,12 @@ bool reach(node &u, node &v) {
 }
 
 bool run_single_bfl_query(int source, int target){
-
-  vis_cur++;
   if (source == target){
     return false;
   }
-  return reach(nodes[source], nodes[target]);
+  vis_cur++;
+  bool hit = reach(nodes[source], nodes[target]);
+  return hit;
 }
 
 bool run_all_bfl_queries(vector<pair<int,int>> queries){

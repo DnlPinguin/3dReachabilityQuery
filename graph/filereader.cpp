@@ -190,7 +190,7 @@ vector<queryParameter> readQueries(string filename){
         while (queryFile >> node >> degree >> xMin >> yMin >> xMax >> yMax >>  area >> cardinality) {
             box area_window;
             counter++;
-            cout << node << " " << degree << " " << xMin << " " << yMin << " " << xMax << " " << yMax << " " << area << " " << cardinality << "\t"; 
+            // cout << node << " " << degree << " " << xMin << " " << yMin << " " << xMax << " " << yMax << " " << area << " " << cardinality << "\t"; 
             queries.push_back(queryParameter(node, box(point(xMin, yMin), point(xMax, yMax)), degree, cardinality));
         }
     }
@@ -246,7 +246,6 @@ void readBflForNodeIdentifer(string filename, Graph* SocialGraph){
     cout << "Read bfl Identifier" << endl;
     ifstream file;
     file.open("data/bfl/" + filename);
-
     int source, target;
     if (file.is_open()){
         while (file >> source >> target) {

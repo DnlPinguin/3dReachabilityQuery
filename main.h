@@ -89,7 +89,7 @@ bool spareachMbr(queryParameter queryParam, Graph* socialGraph,rTreeSccPlanes* r
 
 bool spareachBfl(queryParameter queryParam, Graph* SocialGraph, rTreePlanes* rTree);
 
-bool spareachBflMbr(queryParameter queryParam, Graph* SocialGraph, rTreePlanes* rTree, LocationMap* spatialGraph);
+bool spareachBflMbr(queryParameter queryParam, Graph* SocialGraph, rTreeSccPlanes* rTree, LocationMap* spatialGraph);
 
 void readPostorder(string filename, Graph* SocialGraph);
 

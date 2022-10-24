@@ -5,7 +5,6 @@ bool spareachBfl(queryParameter queryParam, Graph* SocialGraph, rTreePlanes* rTr
 {
     int node = queryParam.queryNode;
     box spatialRegion = queryParam.spatialRegion;
-
     for (auto it = rTree->qbegin(bgi::intersects(spatialRegion)); it != rTree->qend(); ++it)
     {
         int u = SocialGraph->nodeToBflIdentifier[node];
@@ -21,7 +20,7 @@ bool spareachBfl(queryParameter queryParam, Graph* SocialGraph, rTreePlanes* rTr
     return false;
 };
 
-bool spareachBflMbr(queryParameter queryParam, Graph* SocialGraph, rTreePlanes* rTree, LocationMap* spatialGraph)
+bool spareachBflMbr(queryParameter queryParam, Graph* SocialGraph, rTreeSccPlanes* rTree, LocationMap* spatialGraph)
 {
     int node = queryParam.queryNode;
     box spatialRegion = queryParam.spatialRegion;
@@ -35,13 +34,13 @@ bool spareachBflMbr(queryParameter queryParam, Graph* SocialGraph, rTreePlanes* 
 
         int u,v;
         u = node;
-        if (socialGraph->NodeBelongsToSCC.count(node) != 0)
+        if (SocialGraph->NodeBelongsToSCC.count(node) != 0)
         {
-            u = socialGraph->NodeBelongsToSCC[node]; 
+            u = SocialGraph->NodeBelongsToSCC[node]; 
         }
         v = currnode;
-        u = socialGraph->nodeToBflIdentifier[u];
-        v = socialGraph->nodeToBflIdentifier[v]; 
+        u = SocialGraph->nodeToBflIdentifier[u];
+        v = SocialGraph->nodeToBflIdentifier[v]; 
         if (!isMbr) {
             if (run_single_bfl_query(u,v)) {
                return true;
