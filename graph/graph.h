@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <map>
 #include <vector>
+#include <string>
 
 typedef float coordinates;
 
@@ -98,7 +99,6 @@ public:
 	bool containsPoint(Location loc);
 	
 	void print();
-	string getString();
 	string stringify();
 	//Checks if the MBR overlaps with the seconds MBR
 	bool overlaps(MBR other);
