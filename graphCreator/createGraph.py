@@ -1,5 +1,4 @@
 from ast import main
-from tkinter.tix import MAIN
 import networkx
 import time
 import sys
@@ -28,7 +27,7 @@ def construct_postorder_on_nodes(file_name):
         post_order_file.write(str(post_order[i]) + "\n")
     
 
-
-construct_postorder_on_nodes("yelp_wcc")
+file = input("specify graph name")
+construct_postorder_on_nodes(file)
 
 
