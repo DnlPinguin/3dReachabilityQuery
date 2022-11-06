@@ -15,12 +15,21 @@ bool intersects(MBR queryArea, box queryWindow)
 in this region too.
 */
 bool overlaps(MBR spatialGrid, box queryWindow)
-{
-	if (spatialGrid.xMin >= queryWindow.min_corner().get<0>() && spatialGrid.yMin >= queryWindow.min_corner().get<1>() && spatialGrid.xMax <= queryWindow.max_corner().get<0>() && spatialGrid.yMax <= queryWindow.max_corner().get<1>())
-	{
-		return true;
+{	
+	if (spatialGrid.xMin < queryWindow.min_corner().get<0>())
+		return false;
+	
+	if (spatialGrid.yMin < queryWindow.min_corner().get<1>()){
+		return false;
 	}
-	return false;
+
+	if (spatialGrid.yMax > queryWindow.max_corner().get<1>()){
+		return false;
+	}
+	if (spatialGrid.xMax > queryWindow.max_corner().get<0>()){
+		return false;
+	}
+	return true;
 }
 
 
@@ -217,6 +226,9 @@ bool RangeReachVertex::SpaReachQuery(int sourceNode, box queryWindow, Graph *soc
 
 		if (R_Vertex.count(curr_node))
 		{
+			if (overlaps(R_Vertex[curr_node], queryWindow)){
+				return true;
+			}
 			if (intersects(R_Vertex[curr_node], queryWindow))
 			{
 				for (int reachable_node : socialGraph->GraphScheme[curr_node])

@@ -11,14 +11,14 @@ def construct_super_nodes_on_graph(file_name):
     Reduced_G = networkx.DiGraph()
     
     graph_file = open(
-        "../data/raw/{}_social".format(file_name), "r")
+        "./data/raw/{}_social".format(file_name), "r")
 
     start = int(time.time())
     # read graph file
     max_node = -1
     counter = 0
     for edge in graph_file:
-        edge = edge.replace("\n", "").split(",")
+        edge = edge.replace("\n", "").split("\t")
         max_node = max(max_node, int(edge[0]), int(edge[1]))
         G.add_edge(int(edge[0]), int(edge[1]))
         counter = counter + 1
@@ -37,7 +37,7 @@ def construct_super_nodes_on_graph(file_name):
     node_belongs_to_scc = {}
 
     scc_file = open(
-        "../data/processed/{}_strongly_connected_components".format(file_name), "w")
+        "./data/strongly_connected_components/{}_strongly_connected_components".format(file_name), "w")
     counter = 1
 
     start = int(time.time())
@@ -80,7 +80,7 @@ def construct_super_nodes_on_graph(file_name):
    
     #write reduced scheme
     reduced_scheme_file = open(
-        "../data/processed/{}_reduced_scheme".format(file_name), "w")
+        "./data/reduced_graph/{}_reduced_scheme".format(file_name), "w")
 
     start = int(time.time())
     for key in reduced_graph:
@@ -97,16 +97,16 @@ def construct_super_nodes_on_graph(file_name):
      # read spatial file
     
     spatial_file = open(
-        "../data/raw/{}_spatial".format(file_name), "r")
+        "./data/raw/{}_spatial".format(file_name), "r")
     spatial_dict = {}
     for edge in spatial_file:
-        edge = edge.replace("\n", "").split(",")
+        edge = edge.replace("\n", "").split("\t")
         if (edge[1] != '' and edge[2] != ''):
             spatial_dict[int(edge[0])] = [float(edge[1]), float(edge[2])]
 
     # create compressed spatial file
     compressed_spatial_file = open(
-        "../data/processed/{}_reduced_spatial_data".format(file_name), "w"
+        "./data/reduced_spatial_data/{}_reduced_spatial_data".format(file_name), "w"
     )
     start = int(time.time())
     compressed_spatial_dict = {}

@@ -11,7 +11,7 @@ def construct_postorder_on_nodes(file_name):
     start = int(time.time())
 
     graph_file = open(
-        "../data/processed/{}_reduced_scheme".format(file_name), "r")
+        "./data/reduced_graph/{}_reduced_scheme".format(file_name), "r")
 
     G = networkx.DiGraph()
 
@@ -23,7 +23,7 @@ def construct_postorder_on_nodes(file_name):
     print("Graph copied into memory ", int(time.time()) - start , " sec")
     start = int(time.time())
     post_order = list(networkx.dfs_postorder_nodes(G))
-    post_order_file = open("../data/processed/{}_postorder".format(file_name), "w")
+    post_order_file = open("./data/postorder/{}_postorder".format(file_name), "w")
 
     for i in range(0,len(post_order)): 
         post_order[i]
@@ -31,5 +31,4 @@ def construct_postorder_on_nodes(file_name):
     
     print("Postorder created: ", (int(time.time()) - start))
 
-construct_postorder_on_nodes("yelp_wcc")
 
